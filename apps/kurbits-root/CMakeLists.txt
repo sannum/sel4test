@@ -12,25 +12,11 @@
 
 cmake_minimum_required(VERSION 3.7.2)
 
-project(sel4test-driver C)
+project(kurbits-root C)
 
 set(configure_string "")
 
-config_option(Sel4testHaveTimer HAVE_TIMER "Enable tests that require a timer driver" DEFAULT ON)
-
-config_option(
-    Sel4testHaveCache
-    HAVE_CACHE
-    "Enable tests that require a functioning cache"
-    DEFAULT
-    ON
-)
-if(Sel4testAllowSettingsOverride)
-    mark_as_advanced(CLEAR Sel4testHaveTimer Sel4testHaveCache)
-else()
-    mark_as_advanced(FORCE Sel4testHaveTimer Sel4testHaveCache)
-endif()
-add_config_library(sel4test-driver "${configure_string}")
+add_config_library(kurbits-root "${configure_string}")
 
 find_package(musllibc REQUIRED)
 find_package(util_libs REQUIRED)
@@ -50,7 +36,6 @@ sel4_libs_import_libraries()
 # is called.
 set(LibNanopb ON CACHE BOOL "" FORCE)
 sel4_projects_libs_import_libraries()
-add_subdirectory(../../libsel4testsupport libsel4testsupport)
 
 file(
     GLOB
@@ -63,15 +48,10 @@ file(
         src/plat/${KernelPlatform}/*.S
 )
 
-# Import build rules for test app
-add_subdirectory(../sel4test-tests sel4test-tests)
-include(cpio)
-MakeCPIO(archive.o "$<TARGET_FILE:sel4test-tests>")
-
-add_executable(sel4test-driver EXCLUDE_FROM_ALL ${static} archive.o)
-target_include_directories(sel4test-driver PRIVATE "include")
+add_executable(kurbits-root EXCLUDE_FROM_ALL ${static})
+target_include_directories(kurbits-root PRIVATE "include")
 target_link_libraries(
-    sel4test-driver
+    kurbits-root
     PUBLIC
         sel4_autoconf
         muslc
@@ -81,14 +61,12 @@ target_link_libraries(
         sel4vka
         sel4utils
         sel4rpc
-        sel4test
         sel4platsupport
         sel4muslcsys
-        sel4testsupport
-    PRIVATE sel4test-driver_Config
+    PRIVATE kurbits-root_Config
 )
-target_compile_options(sel4test-driver PRIVATE -Werror -g)
+target_compile_options(kurbits-root PRIVATE -Werror -g)
 
 # Set this image as the rootserver
 include(rootserver)
-DeclareRootserver(sel4test-driver)
+DeclareRootserver(kurbits-root)

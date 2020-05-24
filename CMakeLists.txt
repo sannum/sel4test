@@ -14,7 +14,7 @@ cmake_minimum_required(VERSION 3.7.2)
 
 include(settings.cmake)
 
-project(sel4test C CXX ASM)
+project(kurbits C CXX ASM)
 
 find_package(seL4 REQUIRED)
 find_package(elfloader-tool REQUIRED)
@@ -34,7 +34,7 @@ if((NOT Sel4testAllowSettingsOverride) AND (KernelArchARM OR KernelArchRiscV))
 endif()
 elfloader_import_project()
 
-add_subdirectory(apps/sel4test-driver)
+add_subdirectory(apps/kurbits-root)
 
 include(simulation)
 if(KernelSel4ArchX86_64)
